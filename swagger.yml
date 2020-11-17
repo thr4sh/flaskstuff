@@ -131,4 +131,4 @@ paths:
           required: True
       responses:
         200:
-description: Successfully deleted a person from people list
+          description: Successfully deleted a person from people list
