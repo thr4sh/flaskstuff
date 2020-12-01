@@ -10,6 +10,7 @@ produces:
 
 basePath: /api
 
+
 # Paths supported by the server application
 paths:
   /people:
@@ -36,13 +37,18 @@ paths:
           schema:
             type: array
             items:
+              type: object
               properties:
-                fname:
-                  type: string
                 lname:
+                  type: string
+                fname:
                   type: string
                 timestamp:
                   type: string
+                notes:
+                  type: array
+                  items:
+                    type: string
 
     post:
       operationId: people.create
@@ -64,11 +70,16 @@ paths:
               lname:
                 type: string
                 description: Last name of person to create
+              notes:
+                type: array
+                description: An array of notes to show
+                items:
+                    type : string
       responses:
         201:
           description: Successfully created person in list
 
-  /people/{lname}:
+  /people/{person_id}:
     get:
       operationId: people.read_one
       tags:
@@ -76,7 +87,7 @@ paths:
       summary: Read one person from the people list
       description: Read one person from the people list
       parameters:
-        - name: lname
+        - name: person_id
           in: path
           description: Last name of the person to get from the list
           type: string
@@ -85,6 +96,7 @@ paths:
         200:
           description: Successfully read person from people list operation
           schema:
+            type : object
             properties:
               fname:
                 type: string
@@ -92,6 +104,10 @@ paths:
                 type: string
               timestamp:
                 type: string
+              notes:
+                type: array
+                items:
+                  type: string
 
     put:
       operationId: people.update
@@ -100,13 +116,15 @@ paths:
       summary: Update a person in the people list
       description: Update a person in the people list
       parameters:
-        - name: lname
-          in: path
-          description: Last name of the person to update in the list
+        - name : person_id
+          in : path
+          description: Person's id
           type: string
-          required: True
+          required: true
         - name: person
           in: body
+          description : The Person
+          required: true
           schema:
             type: object
             properties:
@@ -114,6 +132,13 @@ paths:
                 type: string
               lname:
                 type: string
+              notes:
+                type: array
+                items:
+                  type: string
+
+
+
       responses:
         200:
           description: Successfully updated person in people list
@@ -125,8 +150,151 @@ paths:
       summary: Delete a person from the people list
       description: Delete a person
       parameters:
-        - name: lname
+        - name: person_id
           in: path
+          type: string
+          required: True
+      responses:
+        200:
+          description: Successfully deleted a person from people list
+
+  /people/{person_id}/notes/:
+    get:
+      operationId: notes.read_all
+      tags:
+        - Notes
+      summary: Read the entire list of n0tes
+      description: Notes. All of them for a particular person
+      parameters:
+        - name: person_id
+          in: path
+          type: string
+          description: person id
+          required: true
+      responses:
+        200:
+          description: Successfully read note list operation
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                content:
+                  type: string
+                timestamp:
+                  type: string
+
+    put:
+      operationId: notes.create
+      tags:
+       - Notes
+      summary: Create  n0tes
+      description: Notes. Create all of them for a particular person
+      parameters:
+        - name: person_id
+          in: path
+          type: string
+          description: person id
+          required: true
+        - name: note
+          in: body
+          required: true
+          description: an array of notes
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                content:
+                  type: string
+                timestamp:
+                  type: string
+
+      responses:
+        200:
+          description: Successfully created notes
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                content:
+                  type: string
+                timestamp:
+                  type: string
+
+  /people/{person_id}/notes/{note_id}:
+    get:
+      operationId: notes.read_one
+      tags:
+        - Notes
+      summary: Read one note of a person
+      description: ^Same
+      parameters:
+        - name: person_id
+          in: path
+          description: Person
+          type: string
+          required: True
+        - name: note_id
+          in: path
+          description: Note
+          type: string
+          required: True
+
+
+
+
+      responses:
+        200:
+          description: Successfully read person from people list operation
+          schema:
+            type: object
+            properties:
+              content:
+                type: string
+              timestamp:
+                type: string
+
+    put:
+      operationId: notes.update
+      tags:
+        - People
+      summary: Update a note
+      description: ^
+      parameters:
+        - name: person_id
+          in: path
+          description: Person's id
+          type: string
+          required: True
+        - name: note_id
+          in: path
+          description: Note's id that is to change
+          type: string
+          required: True
+
+
+
+      responses:
+        200:
+          description: Successfully updated person in people list
+
+    delete:
+      operationId: notes.delete
+      tags:
+        - Notes
+      summary: ITS PRETTY OBVIOUS WHAT IT DOES, DOESN'T IT?
+      description: ^Same
+      parameters:
+        - name: person_id
+          in: path
+          description: Person's id
+          type: string
+          required: True
+        - name: note_id
+          in: path
+          description: Note's id
           type: string
           required: True
       responses:
